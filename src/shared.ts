@@ -25,13 +25,13 @@ contentTypes.set('json', 'application/json');
 contentTypes.set('ico', 'image/x-icon');
 contentTypes.set('js', 'text/javascript');
 ['html', 'css'].forEach(ext => contentTypes.set(ext, `text/${ext}`));
-['txt', ''].forEach(ext => contentTypes.set(ext, 'text/plain'));
+['txt', '', undefined].forEach(ext => contentTypes.set(ext, 'text/plain'));
 ['gif', 'png', 'jpg'].forEach(ext => contentTypes.set(ext, `image/${ext}`));
 
 // return Content-Type http attribute according to file's extension
 function getContentType(fileName = '.'): string {
     const fileExt = fileName.split('.')[1].toLowerCase() || '';
-    return contentTypes.get(fileExt);
+    return contentTypes.has(fileExt) ? contentTypes.get(fileExt) : contentTypes.get(undefined);
 }
 
 // append parameters to a base url
