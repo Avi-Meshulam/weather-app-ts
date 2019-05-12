@@ -1,15 +1,14 @@
 'use strict';
 
-const http = require('http');
-const url = require('url');
-const _ = require('lodash');
-const io = require('./io');
-const buildHeader = require('./shared').buildHeader;
-const citiesCache = require('./shared').citiesCache;
-const getWeatherByCityId = require('./weather').getByCityId;
-const getWeatherByCityName = require('./weather').getByCityName;
+import {ICity} from "./shared";
+import {createServer, IncomingMessage, ServerResponse} from 'http';
+import {parse} from 'url';
+import {isEmpty} from 'lodash';
+import {readdir, readFile} from './io';
+import {buildHeader, citiesCache} from './shared';
+import {getByCityId as getWeatherByCityId, getByCityName as getWeatherByCityName} from './weather';
 
-const PUBLIC_FOLDER = 'public';
+const PUBLIC_FOLDER = './src/public';
 const DEFAULT_PUBLIC_RESOURCE = 'index.html';
 const CITIES_FILE = 'cities.json';
 const PORT = 8080;
@@ -18,25 +17,31 @@ const filesCache = new Map();
 
 cacheFiles()
     .then(() =>
-        http.createServer(handleRequest).listen(PORT, () => {
+        createServer(handleRequest).listen(PORT, () => {
             console.log(`Client is available at http://localhost:${PORT}`);
         }));
 
 // Cache all files in public folder
 async function cacheFiles() {
-    const files = await io.readdir(PUBLIC_FOLDER);
-    const readPromises = [];
-    files.forEach(file =>
-        readPromises.push(io.readFile(`${PUBLIC_FOLDER}/${file}`)
-            .then(data => filesCache.set(file, data))
-            .catch(err => err)  // prevent breaking on rejection
-        ));
+    const files: string[] = await readdir(PUBLIC_FOLDER);
+    const readPromises: Array<Promise<string>> = [];
+    files.forEach(file => {
+        if (!/.*\.(ts|map)/.test(file)) {
+            readPromises.push(readFile(`${PUBLIC_FOLDER}/${file}`)
+                .then(data => filesCache.set(file, data))
+                .catch(err => err)  // prevent breaking on rejection
+            )
+        }
+    });
     await Promise.all(readPromises);
     JSON.parse(filesCache.get(CITIES_FILE))
-        .forEach(city => citiesCache.set(city.id, city));
+        .forEach((city: ICity) => citiesCache.set(city.id, city));
 }
 
-function handleRequest(req, res) {
+function handleRequest(req: IncomingMessage, res: ServerResponse) {
+    if (!req) {
+        return;
+    }
     switch (req.method.toUpperCase()) {
         case 'OPTIONS':
             res.writeHead(200);
@@ -50,7 +55,7 @@ function handleRequest(req, res) {
     }
 }
 
-function handleGetRequest(req, res) {
+function handleGetRequest(req: IncomingMessage, res: ServerResponse) {
     let {path, query} = parseRequest(req);
 
     // weather/{cityId}
@@ -62,7 +67,7 @@ function handleGetRequest(req, res) {
                 res.end(data);
             });
     } else if (path === 'weather' && query && query.city) {
-        const [city, country] = query.city.split(',');
+        const [city, country] = (<string>query.city).split(',');
         getWeatherByCityName(city, country)
             .then(data => {
                 res.setHeader('Set-Cookie', [`weatherData=${data}`]);
@@ -73,8 +78,8 @@ function handleGetRequest(req, res) {
     }
 }
 
-function parseRequest(req) {
-    const reqObj = url.parse(req.url, true);
+function parseRequest(req: IncomingMessage) {
+    const reqObj = parse(<string>req.url, true);
     const pathname = reqObj.pathname.trim('/').toLowerCase();
 
     return {
@@ -83,17 +88,17 @@ function parseRequest(req) {
     }
 }
 
-function sendFile(res, fileName, query) {
+function sendFile(res: ServerResponse, fileName: string, query?: Object) {
     if (filesCache.has(fileName)) {
         res.writeHead(200, buildHeader(fileName));
         res.end(filterJSON(filesCache.get(fileName), query));
     } else {
-        handleNewFileRequest(res, fileName, query);
+        handleUncachedFileRequest(res, fileName, query);
     }
 }
 
-function handleNewFileRequest(res, fileName, query) {
-    io.readFile(`${PUBLIC_FOLDER}/${fileName}`)
+function handleUncachedFileRequest(res: ServerResponse, fileName: string, query?: Object) {
+    readFile(`${PUBLIC_FOLDER}/${fileName}`)
         .then(data => {
             filesCache.set(fileName, data);
             res.writeHead(200, buildHeader(fileName));
@@ -108,10 +113,10 @@ function handleNewFileRequest(res, fileName, query) {
             res.end());
 }
 
-function filterJSON(stringifiedJSON, filtersObj) {
+function filterJSON(stringifiedJSON: string, filtersObj?: Object) {
 
     //#region Validations
-    if (!filtersObj || _.isEmpty(filtersObj))
+    if (!filtersObj || isEmpty(filtersObj))
         return stringifiedJSON;
 
     // is JSON structure?

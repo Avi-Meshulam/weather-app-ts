@@ -2,16 +2,22 @@
   "name": "weather",
   "version": "1.0.0",
   "description": "",
-  "main": "server.ts",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.ts",
-    "dev": "nodemon server.ts"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "author": "Avi",
   "license": "ISC",
   "dependencies": {
     "lodash": "^4.17.11",
     "node-fetch": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.0",
+    "@types/node-fetch": "^2.3.3",
+    "@types/lodash": "^4.14.126",
+    "@types/leaflet": "^1.4.4"
   }
 }

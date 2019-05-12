@@ -1,6 +1,10 @@
 'use strict';
 
-HTMLElement.prototype.removeChildren = function() {
+interface HTMLElement {
+    removeChildren(): void;
+}
+
+HTMLElement.prototype.removeChildren = function () {
     while (this.firstChild) {
         this.removeChild(this.firstChild);
     }
@@ -11,5 +15,3 @@ const sortTypes = {
     caseInsensitive: (a, b) =>
         a.localeCompare(b, undefined, {sensitivity: 'base'})
 };
-
-export {sortTypes};

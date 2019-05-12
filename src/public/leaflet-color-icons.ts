@@ -25,5 +25,3 @@ const Icons = {
 	blueIcon: blueIcon,
 	redIcon: redIcon
 };
-
-export default Icons;
