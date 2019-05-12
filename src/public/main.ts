@@ -15,6 +15,11 @@ const weatherElem = document.querySelector('#weather-section');
 
 let selectedCity;
 
+// Add startup page to navigation history
+if(!window.history.state) {
+    window.history.replaceState(-1, '', serverUrl);
+}
+
 // this event is triggered when the user clicks the browser's back and forward buttons
 window.onpopstate = function (e) {
     if (Number.isInteger(e.state) && citiesListElement.selectedIndex !== e.state) {
@@ -27,10 +32,7 @@ getData(`${serverUrl}/cities.json`)
     .then(cities => {
         cities.sort((c1, c2) => sortTypes.caseInsensitive(c1.name, c2.name));
         renderCitiesList(cities);
-        if (!handleWeatherCookie()) {
-            // Add startup page to navigation history
-            window.history.replaceState(-1, '', serverUrl);
-        }
+        handleWeatherCookie();
     })
     .catch(err => console.error(err));
 
