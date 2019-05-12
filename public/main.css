@@ -1,0 +1,69 @@
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: "Comic Sans MS", fantasy;
+}
+
+main {
+    min-height: 100%;
+    display: flex;
+}
+
+section {
+    margin: 8px;
+}
+
+section header {
+    background-color: darkslateblue;
+    color: white;
+}
+
+label {
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+.data-field {
+    margin-right: 8px;
+}
+
+#map-section {
+    flex-grow: 1;
+}
+
+#data-section {
+    display: flex;
+    flex-direction: column;
+}
+
+#city-section {
+    align-self: center;
+}
+
+#cities-list {
+    background-color: lightcyan;
+}
+
+#weather-section {
+    display: grid;
+    grid: repeat(4, 1fr) / 1fr max-content;
+    grid-column-gap: 10px;
+    border: 1px solid darkblue;
+    border-radius: 5px;
+}
+
+#weather-section header {
+    grid-column: span 2;
+    text-align: center;
+}
+
+/* Medium screens */
+@media all and (max-width: 920px) {
+    main {
+        flex-direction: column;
+    }
+
+    #data-section {
+        align-self: center;
+    }
+}

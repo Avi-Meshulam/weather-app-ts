@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+<main>
+    <section id="data-section">
+        <section id="city-section">
+            <label for="cities-list">Select a city:</label>
+            <select id="cities-list"></select>
+        </section>
+        <section id="weather-section">
+            <header>Weather</header>
+            <label for="description">Description:</label>
+            <div id="description" class="data-field"></div>
+            <label for="wind">Wind:</label>
+            <div id="wind" class="data-field"></div>
+            <label for="temperature">Temperature:</label>
+            <div id="temperature" class="data-field"></div>
+            <label for="humidity">Humidity:</label>
+            <div id="humidity" class="data-field"></div>
+        </section>
+    </section>
+    <section id="map-section"></section>
+</main>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+<script src="main.ts" type="module"></script>
+</body>
+
+</html>
