@@ -11,24 +11,24 @@
 - [lodash](https://www.npmjs.com/package/lodash)
 
 ### Features
-#### Responsive design - The display is adjusted to screen dimensions
+#### Responsive design - The display is adjusted to fit screen
 
 #### Caching:
 Server side:
 
 - Static files (html, css, js, json, images)
-- Weather data (with a predetermined expiration time)
+- Weather data (upon request, with a predetermined expiration time)
 
 Client side:
 
-- Cities data (coordinates, country, state etc)
-- Weather data (with a predetermined expiration time)
+- Cities data (names, coordinates, countries etc.)
+- Weather data (upon request, with a predetermined expiration time)
 
 ### Installation & Run:
 
-1. Open command prompt in 'weather-app' folder
-2. Type 'npm install' - that will install all the required packages for the application
-3. Type 'npm start' - that will run the server
+1. Open command prompt in 'weather-app-avi' folder
+2. Type 'npm install' to install all the required packages for the application
+3. Type 'npm start' to start the server
 4. Open a browser at http://localhost:8080
 
 ### Routes:
