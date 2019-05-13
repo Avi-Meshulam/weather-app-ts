@@ -120,7 +120,7 @@ function updateWeatherInfo(city = selectedCity) {
         }
     }
 
-    // If data does not exist in cache or/and if it's expired => fetch data from server
+    // If data does not exist in cache or if it's expired => fetch data from server
     getData(`${serverUrl}/weather/${city.id}`)
         .then(weatherObj => {
             weatherObj.lastModified = Date.now();
