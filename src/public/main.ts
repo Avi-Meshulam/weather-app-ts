@@ -90,10 +90,9 @@ function selectedCityChanged(e) {
     const cityId = Number(e.target.value);
     selectedCity = cityId ? citiesCache.get(cityId) : undefined;
 
-    const url = `${serverUrl}${selectedCity ? `/weather?city=${selectedCity.name},${selectedCity.country}` : ''}`;
-
     if (window.history.state !== e.target.selectedIndex) {
-        window.history.pushState(e.target.selectedIndex, '', url);
+       window.history.pushState(e.target.selectedIndex, '', 
+           `${serverUrl}${selectedCity ? `/weather?city=${selectedCity.name},${selectedCity.country}` : ''}`);
     }
 
     if (selectedCity) {
@@ -108,7 +107,7 @@ function selectedCityChanged(e) {
 }
 
 function updateWeatherInfo(city = selectedCity) {
-    if (!selectedCity) {
+    if (!city) {
         renderWeatherData();
         return;
     }
@@ -121,7 +120,7 @@ function updateWeatherInfo(city = selectedCity) {
         }
     }
 
-    // If data does not exist in cache or if it is expired => fetch data from server
+    // If data does not exist in cache or/and if it's expired => fetch data from server
     getData(`${serverUrl}/weather/${city.id}`)
         .then(weatherObj => {
             weatherObj.lastModified = Date.now();
@@ -157,7 +156,6 @@ function initMap(mapElementId) {
 
 // if the client asks for weather data through url,
 // server responds with a cookie of weather data.
-// Returns true if cookie was found
 function handleWeatherCookie() {
     // if document.cookie contains weatherData => render it!
     const weatherData = document.cookie.replace(/(?:(?:^|.*;\s*)weatherData\s*\=\s*([^;]*).*$)|^.*$/, "$1");
@@ -170,7 +168,5 @@ function handleWeatherCookie() {
         citiesListElement.dispatchEvent(new Event("change"));
         // Delete weatherData value from cookie
         document.cookie = 'weatherData=;';
-        return true;
     }
-    return false;
 }
