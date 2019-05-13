@@ -36,7 +36,11 @@ label {
     flex-direction: column;
 }
 
-#city-section {
+#data-section button {
+    align-self: center;
+}
+
+#data-section #city-section {
     align-self: center;
 }
 

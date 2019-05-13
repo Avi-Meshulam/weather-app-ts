@@ -25,7 +25,7 @@ contentTypes.set('json', 'application/json');
 contentTypes.set('ico', 'image/x-icon');
 contentTypes.set('js', 'text/javascript');
 ['html', 'css'].forEach(ext => contentTypes.set(ext, `text/${ext}`));
-['txt', '', undefined].forEach(ext => contentTypes.set(ext, 'text/plain'));
+['txt', '', undefined, null].forEach(ext => contentTypes.set(ext, 'text/plain'));
 ['gif', 'png', 'jpg'].forEach(ext => contentTypes.set(ext, `image/${ext}`));
 
 // return Content-Type http attribute according to file's extension

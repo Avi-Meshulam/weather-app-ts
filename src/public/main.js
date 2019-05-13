@@ -16,7 +16,7 @@ const weatherCache = new Map();
 const markersCache = new Map();
 const map = initMap('map-section');
 const citiesListElement = document.querySelector('#cities-list');
-const weatherElem = document.querySelector('#weather-section');
+const weatherElement = document.querySelector('#weather-section');
 let selectedCity;
 // Add startup page to navigation history
 if (!window.history.state) {
@@ -29,6 +29,12 @@ window.onpopstate = function (e) {
         citiesListElement.dispatchEvent(new Event("change"));
     }
 };
+document.querySelector('#data-section #btnReset').addEventListener('click', function () {
+    if (citiesListElement.selectedIndex !== -1) {
+        citiesListElement.selectedIndex = -1;
+        citiesListElement.dispatchEvent(new Event("change"));
+    }
+});
 getData(`${serverUrl}/cities.json`)
     .then(cities => {
     cities.sort((c1, c2) => sortTypes.caseInsensitive(c1.name, c2.name));
@@ -83,9 +89,8 @@ function selectedCityChanged(e) {
     }
     const cityId = Number(e.target.value);
     selectedCity = cityId ? citiesCache.get(cityId) : undefined;
-    const url = `${serverUrl}${selectedCity ? `/weather?city=${selectedCity.name},${selectedCity.country}` : ''}`;
     if (window.history.state !== e.target.selectedIndex) {
-        window.history.pushState(e.target.selectedIndex, '', url);
+        window.history.pushState(e.target.selectedIndex, '', `${serverUrl}${selectedCity ? `/weather?city=${selectedCity.name},${selectedCity.country}` : ''}`);
     }
     if (selectedCity) {
         markersCache.get(selectedCity).setIcon(Icons.redIcon);
@@ -98,7 +103,7 @@ function selectedCityChanged(e) {
     updateWeatherInfo();
 }
 function updateWeatherInfo(city = selectedCity) {
-    if (!selectedCity) {
+    if (!city) {
         renderWeatherData();
         return;
     }
@@ -109,7 +114,7 @@ function updateWeatherInfo(city = selectedCity) {
             return;
         }
     }
-    // If data does not exist in cache or if it is expired => fetch data from server
+    // If data does not exist in cache or if it's expired => fetch data from server
     getData(`${serverUrl}/weather/${city.id}`)
         .then(weatherObj => {
         weatherObj.lastModified = Date.now();
@@ -120,13 +125,13 @@ function updateWeatherInfo(city = selectedCity) {
 }
 function renderWeatherData(data) {
     if (data) {
-        weatherElem.querySelector('#description').innerHTML = data.weather[0].description;
-        weatherElem.querySelector('#wind').innerHTML = `speed ${data.wind.speed}, ${data.wind.deg} degrees`;
-        weatherElem.querySelector('#temperature').innerHTML = data.main.temp;
-        weatherElem.querySelector('#humidity').innerHTML = `${data.main.humidity}%`;
+        weatherElement.querySelector('#description').innerHTML = data.weather[0].description;
+        weatherElement.querySelector('#wind').innerHTML = `speed ${data.wind.speed}, ${data.wind.deg} degrees`;
+        weatherElement.querySelector('#temperature').innerHTML = data.main.temp;
+        weatherElement.querySelector('#humidity').innerHTML = `${data.main.humidity}%`;
     }
     else {
-        weatherElem.querySelectorAll('.data-field').forEach(elem => elem.innerHTML = '');
+        weatherElement.querySelectorAll('.data-field').forEach(elem => elem.innerHTML = '');
     }
 }
 function initMap(mapElementId) {
@@ -141,7 +146,6 @@ function initMap(mapElementId) {
 }
 // if the client asks for weather data through url,
 // server responds with a cookie of weather data.
-// Returns true if cookie was found
 function handleWeatherCookie() {
     // if document.cookie contains weatherData => render it!
     const weatherData = document.cookie.replace(/(?:(?:^|.*;\s*)weatherData\s*\=\s*([^;]*).*$)|^.*$/, "$1");
@@ -154,8 +158,6 @@ function handleWeatherCookie() {
         citiesListElement.dispatchEvent(new Event("change"));
         // Delete weatherData value from cookie
         document.cookie = 'weatherData=;';
-        return true;
     }
-    return false;
 }
 //# sourceMappingURL=main.js.map

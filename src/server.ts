@@ -6,7 +6,7 @@ import {parse} from 'url';
 import {isEmpty} from 'lodash';
 import {readdir, readFile} from './io';
 import {buildHeader, citiesCache} from './shared';
-import {getByCityId as getWeatherByCityId, getByCityName as getWeatherByCityName} from './weather';
+import {get as getWeather} from './weather';
 
 const PUBLIC_FOLDER = './src/public';
 const DEFAULT_PUBLIC_RESOURCE = 'index.html';
@@ -21,7 +21,7 @@ cacheFiles()
             console.log(`Client is available at http://localhost:${PORT}`);
         }));
 
-// Cache all files in public folder
+// Cache all files in public folder (except *.ts and *.map)
 async function cacheFiles() {
     const files: string[] = await readdir(PUBLIC_FOLDER);
     const readPromises: Array<Promise<string>> = [];
@@ -61,14 +61,14 @@ function handleGetRequest(req: IncomingMessage, res: ServerResponse) {
     // weather/{cityId}
     let result = /\bweather\b\/(\d+)/i.exec(path);
     if (result) {
-        getWeatherByCityId(Number(result[1]))
+        getWeather(Number(result[1]))
             .then(data => {
                 res.writeHead(200, buildHeader('*.json'));
                 res.end(data);
             });
     } else if (path === 'weather' && query && query.city) {
         const [city, country] = (<string>query.city).split(',');
-        getWeatherByCityName(city, country)
+        getWeather(`${city},${country}`)
             .then(data => {
                 res.setHeader('Set-Cookie', [`weatherData=${data}`]);
                 sendFile(res, DEFAULT_PUBLIC_RESOURCE);

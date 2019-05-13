@@ -11,7 +11,7 @@ const markersCache = new Map();
 
 const map = initMap('map-section');
 const citiesListElement: HTMLSelectElement = document.querySelector('#cities-list');
-const weatherElem = document.querySelector('#weather-section');
+const weatherElement = document.querySelector('#weather-section');
 
 let selectedCity;
 
@@ -27,6 +27,13 @@ window.onpopstate = function (e) {
         citiesListElement.dispatchEvent(new Event("change"));
     }
 };
+
+document.querySelector('#data-section #btnReset').addEventListener('click', function() {
+    if (citiesListElement.selectedIndex !== -1) {
+        citiesListElement.selectedIndex = -1;
+        citiesListElement.dispatchEvent(new Event("change"));
+    }
+});
 
 getData(`${serverUrl}/cities.json`)
     .then(cities => {
@@ -132,12 +139,12 @@ function updateWeatherInfo(city = selectedCity) {
 
 function renderWeatherData(data?) {
     if (data) {
-        weatherElem.querySelector('#description').innerHTML = data.weather[0].description;
-        weatherElem.querySelector('#wind').innerHTML = `speed ${data.wind.speed}, ${data.wind.deg} degrees`;
-        weatherElem.querySelector('#temperature').innerHTML = data.main.temp;
-        weatherElem.querySelector('#humidity').innerHTML = `${data.main.humidity}%`;
+        weatherElement.querySelector('#description').innerHTML = data.weather[0].description;
+        weatherElement.querySelector('#wind').innerHTML = `speed ${data.wind.speed}, ${data.wind.deg} degrees`;
+        weatherElement.querySelector('#temperature').innerHTML = data.main.temp;
+        weatherElement.querySelector('#humidity').innerHTML = `${data.main.humidity}%`;
     } else {
-        weatherElem.querySelectorAll('.data-field').forEach(elem => elem.innerHTML = '');
+        weatherElement.querySelectorAll('.data-field').forEach(elem => elem.innerHTML = '');
     }
 }
 
