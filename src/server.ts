@@ -67,8 +67,7 @@ function handleGetRequest(req: IncomingMessage, res: ServerResponse) {
                 res.end(data);
             });
     } else if (path === 'weather' && query && query.city) {
-        const [city, country] = (<string>query.city).split(',');
-        getWeather(`${city},${country}`)
+        getWeather(query.city)
             .then(data => {
                 res.setHeader('Set-Cookie', [`weatherData=${data}`]);
                 sendFile(res, DEFAULT_PUBLIC_RESOURCE);
