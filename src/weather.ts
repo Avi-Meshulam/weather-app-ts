@@ -16,6 +16,9 @@ const weatherCache = new Map();
 
 function get(key: number | string): Promise<string> {
     return new Promise(async (resolve, reject) => {
+        if(typeof key === 'string') {
+            key = key.toLowerCase();
+        }
         if (weatherCache.has(key)) {
             const weatherObj = weatherCache.get(key);
             if (Date.now() - weatherObj.lastModified <= WEATHER_CACHE_EXPIRATION_TIME) {
