@@ -67,7 +67,7 @@ function handleGetRequest(req: IncomingMessage, res: ServerResponse) {
                 res.end(data);
             });
     } else if (path === 'weather' && query && query.city) {
-        getWeather(query.city)
+        getWeather(<string>query.city)
             .then(data => {
                 res.setHeader('Set-Cookie', [`weatherData=${data}`]);
                 sendFile(res, DEFAULT_PUBLIC_RESOURCE);
